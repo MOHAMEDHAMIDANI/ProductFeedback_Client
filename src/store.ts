@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import type { ProductReqList, CommentList, User,Reply } from './Interface' 
-
+import axios from 'axios'
 import anneImg     from '@/assets/anne.jpg'
 import elijahImg   from '@/assets/elijah.jpg'
 import georgeImg   from '@/assets/george.jpg'
@@ -330,59 +330,43 @@ export const useFeedbackStore =  defineStore('feedback' ,{
     }),
     getters: {
         suggestions: (state) => {
-            return state.productData?.filter((data) => data.status === 'suggestion')
+            // return state.productData?.filter((data) => data.status === 'suggestion')
         },
         live: (state)=> {
-            return state.productData?.filter((data) => data.status === 'live')
+            // return state.productData?.filter((data) => data.status === 'live')
         },
         planned: (state)=> {
-            return state.productData?.filter((data) => data.status === 'planned')
+            // return state.productData?.filter((data) => data.status === 'planned')
         },
         progress: (state)=> {
-            return state.productData?.filter((data) => data.status === 'in-progress')
+            // return state.productData?.filter((data) => data.status === 'in-progress')
         },
     },
     actions: {
-        initializeData(){
-            const storedData = localStorage.getItem('productData');
-            const storedCurrentUser = localStorage.getItem('currentUser');
-            
-            this.currentUser = storedCurrentUser ? JSON.parse(storedCurrentUser) : data.currentUser; 
-            this.productData = storedData ? JSON.parse(storedData) : data.productRequests;
-
-            if(!storedData){
-                localStorage.setItem('productData', JSON.stringify(data.productRequests))
-            }
-
-            if(!storedCurrentUser){
-                localStorage.setItem('currentUser',JSON.stringify(data.currentUser))
-            }
+        async initializeData(){
+            // this.currentUser = storedCurrentUser ? JSON.parse(storedCurrentUser) : data.currentUser; 
+            const {data} = await axios.get('http://localhost:3000/feedback',)
+            console.log(data)
+            this.productData = data
         },
-        addFeedback(feedback: ProductReqList){
-            const id = this.productData.length + 1;
-            feedback.id = id;
-            this.productData.push(feedback)
-            localStorage.setItem('productData',JSON.stringify(this.productData))
+        async addFeedback(feedback: ProductReqList){
+            await axios.post('http://localhost:3000/feedback' , {
+                title: feedback.title,
+                category: feedback.category,
+                description: feedback.description,
+            })
         },
-        deleteFeedback(id: number){
-            const feedbackIndex = this.productData.findIndex((item) => item.id === id)
-
-            if (feedbackIndex !== -1){
-                this.productData.splice(feedbackIndex,1)
-                localStorage.setItem('productData', JSON.stringify(this.productData))
-            }
+        async deleteFeedback(id: string){
+            await axios.delete('http://localhost:3000/feedback' , {
+            params : {id: id}
+            })
         },
-        updateFeedback(id: number, updatedFeedback: ProductReqList){
-            const feedbackIndex = this.productData.findIndex((item) => item.id === id)
-
-            if(feedbackIndex !== -1){
-                this.productData[feedbackIndex].title = updatedFeedback.title;
-                this.productData[feedbackIndex].category = updatedFeedback.category;
-                this.productData[feedbackIndex].status = updatedFeedback.status;
-                this.productData[feedbackIndex].description = updatedFeedback.description;
-
-                localStorage.setItem('productData',JSON.stringify(this.productData))
-            }
+        async updateFeedback(id: string, updatedFeedback: ProductReqList){
+            await axios.put('http://localhost:3000/feedback' , {
+                title: updatedFeedback.title,
+                category: updatedFeedback.category,
+                description: updatedFeedback.description,
+            })
         },
         postComment(productId: number , content: string){
             const feedbackIndex = this.productData.findIndex((item) => item.id === productId)

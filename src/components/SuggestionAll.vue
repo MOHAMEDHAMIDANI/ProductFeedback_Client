@@ -72,7 +72,7 @@
           <div class="flex gap-[2.5rem] mobile:flex-col-reverse mobile:gap-y-4">
             <div class="w-[2.5rem] h-[3.3125rem] mobile:w-[4.3125rem] mobile:flex-row mobile:justify-center mobile:gap-[0.625rem] mobile:items-center mobile:h-[2rem] flex flex-col justify-center transition hover:bg-[#CFD7FF] items-center gap-y-2  rounded-[0.625rem] bg-[#f2f4fe] ">
               <img src="../assets/icon-arrow-up.svg" alt="up-nav" class="w-2"/>
-              <h3 class="font-black text-[0.8125rem] text-[#3a4374]">{{ item.upvotes }}</h3>
+              <h3 class="font-black text-[0.8125rem] text-[#3a4374]">{{ item.likes }}</h3>
             </div>
             <div class="flex flex-col gap-y-[1.0625rem]">
               <routerLink :to="{ name: 'feedback-detail', params: { id: item.id}}" class="flex flex-col gap-y-1">
@@ -84,7 +84,7 @@
           </div>
           <div class="flex gap-1 items-center mobile:self-end">
             <img src="../assets/icon-comments.svg" alt="" class="w-[1.25rem] h-[1rem]"/>
-            <h4 class="font-bold text-[#3a4374] text-[1rem] ">{{ item.comments?.length || 0 }}</h4>
+            <h4 class="font-bold text-[#3a4374] text-[1rem] ">{{ item.comments.length }}</h4>
           </div>
         </div>
       </main>
